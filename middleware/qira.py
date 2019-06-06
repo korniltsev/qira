@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
   # validate arguments
   if args.quiet:
-    logging.Logger.setLevel(logging.FATAL)
+    logging.getLogger().setLevel(logging.FATAL)
 
   if args.web_port < 1 or args.web_port > 65535:
     raise Exception("--web-port must be a valid port number (1-65535)")
