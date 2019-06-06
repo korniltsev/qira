@@ -15,6 +15,7 @@ from flask_socketio import SocketIO, emit
 
 from qira_base import *
 import json
+import logging
 import os
 
 def init(lprogram):
@@ -177,7 +178,7 @@ if qira_config.WITH_STATIC:
   @socket_method
   def make(typ, iaddr):
     iaddr = fhex(iaddr)
-    print("*** make",typ,"at",ghex(iaddr))
+    logging.error("*** make %s at %s",typ, ghex(iaddr))
     if typ == 'function':
       program.static.analyzer.make_function_at(program.static, iaddr)
     elif typ == 'code':

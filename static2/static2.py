@@ -31,6 +31,7 @@ from __future__ import print_function
 # all addresses are numbers
 
 import collections
+import logging
 import os, sys
 import re
 import pickle
@@ -71,7 +72,7 @@ class Static:
     loader.load_binary(self)
 
     if self.debug >= 1:
-      print("*** elf loaded")
+      logging.error("*** elf loaded")
 
     """
     # create the static cache dir
@@ -226,7 +227,7 @@ class Static:
     for (laddress, llength) in self.base_memory:
       if address == laddress:
         if self.base_memory[(laddress, llength)] != dat:
-          print("*** WARNING, changing segment",hex(laddress),llength)
+          logging.error("*** WARNING, changing segment %s %s",hex(laddress),llength)
         return
 
     # segments should have an idea of segment permission
@@ -236,7 +237,7 @@ class Static:
   def process(self):
     self.analyzer.analyze_functions(self)
     if self.debug >= 1:
-      print("*** static found %d functions" % len(self['functions']))
+      logging.error("*** static found %d functions", len(self['functions']))
 
 
 # *** STATIC TEST STUFF ***
