@@ -15,7 +15,6 @@ import qira_socat
 import qira_program
 import qira_webserver
 
-logging.basicConfig(level=logging.ERROR, format='%(message)s')
 
 if __name__ == '__main__':
   # define arguments
@@ -31,6 +30,7 @@ if __name__ == '__main__':
   parser.add_argument("--web-port", metavar="PORT", help="listen port for web interface. 3002 by default", type=int, default=qira_config.WEB_PORT)
   parser.add_argument("--socat-port", metavar="PORT", help="listen port for socat. 4000 by default", type=int, default=qira_config.SOCAT_PORT)
   parser.add_argument('-S', '--static', help="enable static2", action="store_true")
+  parser.add_argument('-q', '--quiet', help="disable qira olgging", action="store_true")
   #capstone flag in qira_config for now
 
   # parse arguments, first try
@@ -43,6 +43,9 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   # validate arguments
+  if args.quiet:
+    logging.Logger.setLevel(logging.FATAL)
+
   if args.web_port < 1 or args.web_port > 65535:
     raise Exception("--web-port must be a valid port number (1-65535)")
   if args.socat_port < 1 or args.socat_port > 65534:
