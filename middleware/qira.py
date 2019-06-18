@@ -49,7 +49,7 @@ if __name__ == '__main__':
     log.addHandler(logging.StreamHandler())
   else:
     log.setLevel(logging.CRITICAL)
-  print(log.handlers)
+
   if args.web_port < 1 or args.web_port > 65535:
     raise Exception("--web-port must be a valid port number (1-65535)")
   if args.socat_port < 1 or args.socat_port > 65534:
