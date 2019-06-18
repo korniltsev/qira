@@ -32,7 +32,7 @@ void *thread_entry(void *trace_class) {
   return NULL;
 }
 
-Trace::Trace() {
+Trace::Trace(bool quiet) {
   entries_done_ = 1;
   fd_ = 0;
   backing_ = NULL;
@@ -55,7 +55,7 @@ Trace::~Trace() {
   munmap((void*)backing_, backing_size_);
   close(fd_);
 #endif
-  ////printf("dead\n");
+  //printf("dead\n");
 }
 
 char Trace::get_type_from_flags(uint32_t flags) {
@@ -95,7 +95,7 @@ bool Trace::remap_backing(uint64_t new_size) {
   while (1) {
     DWORD fs = GetFileSize(fd_, NULL);
     if (fs < new_size) {
-      //printf("WARNING: requested %" PRIu64 " bytes, but only %llx are in the file...waiting\n", new_size, fs);
+      if (!quiet) printf("WARNING: requested %" PRIu64 " bytes, but only %llx are in the file...waiting\n", new_size, fs);
       usleep(100 * 1000);
     } else {
       break;
@@ -110,7 +110,7 @@ bool Trace::remap_backing(uint64_t new_size) {
   while (1) {
     off_t fs = lseek(fd_, 0, SEEK_END);
     if ((unsigned int)fs < new_size) {
-      //printf("WARNING: requested %" PRIu64 " bytes, but only %" PRIx64 " are in the file...waiting\n", new_size, fs);
+      if (!quiet) printf("WARNING: requested %" PRIu64 " bytes, but only %" PRIx64 " are in the file...waiting\n", new_size, fs);
       usleep(100 * 1000);
     } else {
       break;
@@ -144,13 +144,13 @@ bool Trace::ConnectToFileAndStart(char *filename, unsigned int trace_index, int 
 #else
   fd_ = open(filename, O_RDONLY);
   if (fd_ == -1) {
-    //printf("ERROR: file open failed\n");
+    if (!quiet) printf("ERROR: file open failed\n");
     return false;
   }
 #endif
 
   if (!remap_backing(sizeof(struct change))) {
-    //printf("ERROR: remap backing failed\n");
+    if (!quiet) printf("ERROR: remap backing failed\n");
     return false;
   }
 
@@ -167,7 +167,7 @@ void Trace::process() {
 
   remap_backing(sizeof(struct change)*entry_count); // what if this fails?
 
-  //printf("on %u going from %u to %u...", trace_index_, entries_done_, entry_count);
+  if (!quiet) printf("on %u going from %u to %u...", trace_index_, entries_done_, entry_count);
   fflush(stdout);
 
 #ifndef _WIN32
@@ -250,9 +250,9 @@ void Trace::process() {
   gettimeofday(&tv_end, NULL);
   double t = (tv_end.tv_usec-tv_start.tv_usec)/1000.0 +
              (tv_end.tv_sec-tv_start.tv_sec)*1000.0;
-  //printf("done %f ms\n", t);
+  if (!quiet) printf("done %f ms\n", t);
 #else
-  //printf("done\n");
+  if (!quiet) printf("done\n");
 #endif
 
   // set this at the end

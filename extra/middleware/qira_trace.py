@@ -69,10 +69,10 @@ class Trace:
       if self.changes_committed > 1000000:
         # clamped
         return False
-      sys.stdout.write("on %d going from %d to %d..." % (self.forknum, self.changes_committed,max_changes))
-      sys.stdout.flush()
+      # sys.stdout.write("on %d going from %d to %d..." % (self.forknum, self.changes_committed,max_changes))
+      # sys.stdout.flush()
       log = qira_log.read_log(self.logfile, self.changes_committed, total_changes)
-      sys.stdout.write("read..."); sys.stdout.flush()
+      # sys.stdout.write("read..."); sys.stdout.flush()
       self.process(log)
       print "done", self.maxclnum
       self.changes_committed += total_changes
