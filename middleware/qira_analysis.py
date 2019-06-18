@@ -27,7 +27,7 @@ def ghex(a):
 def draw_multigraph(blocks):
   import pydot
 
-  logging.errror("generating traces")
+  logging.info("generating traces")
 
   arr = []
   trace = []
