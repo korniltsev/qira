@@ -20,6 +20,7 @@ STATIC_CACHE_BASE = "/tmp/qira_static_cache/"
 
 WEBSOCKET_DEBUG = False
 
+quiet = False
 log = logging.getLogger('qira_logger')
 log.propagate = False
 

@@ -48,6 +48,7 @@ if __name__ == '__main__':
     log.setLevel(logging.INFO)
     log.addHandler(logging.StreamHandler())
   else:
+    qira_config.quiet = True
     log.setLevel(logging.CRITICAL)
 
   if args.web_port < 1 or args.web_port > 65535:

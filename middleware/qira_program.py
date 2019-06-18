@@ -404,7 +404,7 @@ class Trace:
   def __init__(self, fn, forknum, program, r1, r2, r3):
     self.forknum = forknum
     self.program = program
-    self.db = qiradb.PyTrace(fn, forknum, r1, r2, r3)
+    self.db = qiradb.PyTrace(fn, forknum, r1, r2, r3, quiet=qira_config.quiet)
     self.load_base_memory()
 
     # analysis stuff
@@ -495,7 +495,7 @@ class Trace:
 
               self.program.static.add_memory_chunk(return_code, dat)
             except Exception as e:
-              logging.info("err")
+              log.info("err %s", e)
 
       except:
         pass
@@ -543,7 +543,7 @@ class Trace:
       log.info("*** using base %d for %d", forkbase, self.forknum)
       f = open(qira_config.TRACE_FILE_BASE+str(forkbase)+"_base", 'r')
     except Exception as e:
-      logging.info("*** base file issue")
+      log.info("*** base file issue")
       # done
       return
 
@@ -573,7 +573,7 @@ class Trace:
               off_map[int(offset, 16)] = images_dir+"/"+image+"/"+offset
             img_map[unquote(image)] = off_map
       except Exception as e:
-        logging.info("Exception while dealing with _images/:")
+        log.info("Exception while dealing with _images/: %s", e)
 
     for ln in f.read().split("\n"):
       ln = ln.split(" ")
@@ -596,6 +596,6 @@ class Trace:
             f.seek(offset)
             dat = f.read(se-ss)
       except Exception as e:
-        logging.info("Failed to get %s offset %d", fn, offset)
+        log.info("Failed to get %s offset %d %s", fn, offset, e)
         continue
       self.program.static.add_memory_chunk(ss, dat)

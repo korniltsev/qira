@@ -30,7 +30,7 @@ def socket_method(func):
         log.info("SOCKET %6.2f ms in %-20s with" % (tm, func.__name__), args)
       return ret
     except Exception as e:
-      logging.info("ERROR %s", e)
+      log.info("ERROR %s", e)
   return func_wrapper
 
 import qira_socat

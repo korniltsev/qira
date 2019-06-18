@@ -42,6 +42,7 @@ Trace::Trace(bool quiet) {
   backing_size_ = 0;
   trace_index_ = 0;
   is_running_ = true;
+  quiet_ = quiet;
 }
 
 // the destructor isn't thread safe wrt to the accessor functions
@@ -95,7 +96,7 @@ bool Trace::remap_backing(uint64_t new_size) {
   while (1) {
     DWORD fs = GetFileSize(fd_, NULL);
     if (fs < new_size) {
-      if (!quiet) printf("WARNING: requested %" PRIu64 " bytes, but only %llx are in the file...waiting\n", new_size, fs);
+      if (!quiet_) printf("WARNING: requested %" PRIu64 " bytes, but only %llx are in the file...waiting\n", new_size, fs);
       usleep(100 * 1000);
     } else {
       break;
@@ -110,7 +111,7 @@ bool Trace::remap_backing(uint64_t new_size) {
   while (1) {
     off_t fs = lseek(fd_, 0, SEEK_END);
     if ((unsigned int)fs < new_size) {
-      if (!quiet) printf("WARNING: requested %" PRIu64 " bytes, but only %" PRIx64 " are in the file...waiting\n", new_size, fs);
+      if (!quiet_) printf("WARNING: requested %" PRIu64 " bytes, but only %" PRIx64 " are in the file...waiting\n", new_size, fs);
       usleep(100 * 1000);
     } else {
       break;
@@ -144,13 +145,13 @@ bool Trace::ConnectToFileAndStart(char *filename, unsigned int trace_index, int 
 #else
   fd_ = open(filename, O_RDONLY);
   if (fd_ == -1) {
-    if (!quiet) printf("ERROR: file open failed\n");
+    if (!quiet_) printf("ERROR: file open failed\n");
     return false;
   }
 #endif
 
   if (!remap_backing(sizeof(struct change))) {
-    if (!quiet) printf("ERROR: remap backing failed\n");
+    if (!quiet_) printf("ERROR: remap backing failed\n");
     return false;
   }
 
@@ -167,7 +168,7 @@ void Trace::process() {
 
   remap_backing(sizeof(struct change)*entry_count); // what if this fails?
 
-  if (!quiet) printf("on %u going from %u to %u...", trace_index_, entries_done_, entry_count);
+  if (!quiet_) printf("on %u going from %u to %u...", trace_index_, entries_done_, entry_count);
   fflush(stdout);
 
 #ifndef _WIN32
@@ -250,9 +251,9 @@ void Trace::process() {
   gettimeofday(&tv_end, NULL);
   double t = (tv_end.tv_usec-tv_start.tv_usec)/1000.0 +
              (tv_end.tv_sec-tv_start.tv_sec)*1000.0;
-  if (!quiet) printf("done %f ms\n", t);
+  if (!quiet_) printf("done %f ms\n", t);
 #else
-  if (!quiet) printf("done\n");
+  if (!quiet_) printf("done\n");
 #endif
 
   // set this at the end
