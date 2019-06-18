@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
   # handle arguments
   if sys.platform == "darwin":
-    logging.error("*** running on darwin, defaulting to --pin")
+    logging.info("*** running on darwin, defaulting to --pin")
     qira_config.USE_PIN = True
   else:
     qira_config.USE_PIN = args.pin
@@ -72,10 +72,10 @@ if __name__ == '__main__':
     qira_config.TRACE_LIBRARIES = True
 
   if args.static:
-    logging.error("*** using static")
+    logging.info("*** using static")
     qira_config.WITH_STATIC = True
   if args.flush_cache:
-    logging.error("*** flushing caches")
+    logging.info("*** flushing caches")
     os.system("rm -rfv /tmp/qira*")
 
   # qemu args from command line
@@ -94,14 +94,14 @@ if __name__ == '__main__':
       raise Exception("can't run as server if QIRA is already running")
   except:
     is_qira_running = 0
-    logging.error("no qira server found, starting it")
+    logging.info("no qira server found, starting it")
     program.clear()
 
   # start the binary runner
   if args.server:
     qira_socat.start_bindserver(program, qira_config.SOCAT_PORT, -1, 1, True)
   else:
-    logging.error("**** running %s",program.program)
+    logging.info("**** running %s",program.program)
     program.execqira(shouldfork=not is_qira_running)
 
   if not is_qira_running:

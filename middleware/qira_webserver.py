@@ -26,7 +26,7 @@ def socket_method(func):
 
       # print slow calls, slower than 50ms
       if tm > 50 or qira_config.WEBSOCKET_DEBUG:
-        logging.error("SOCKET %6.2f ms in %-20s with" % (tm, func.__name__), args)
+        logging.info("SOCKET %6.2f ms in %-20s with" % (tm, func.__name__), args)
       return ret
     except Exception as e:
       logging.exception("ERROR")
@@ -110,7 +110,7 @@ def mwpoller():
 @socket_method
 def forkat(forknum, clnum, pending):
   global program
-  logging.error("forkat %s %s %s",forknum,clnum,pending)
+  logging.info("forkat %s %s %s",forknum,clnum,pending)
 
   REGSIZE = program.tregs[1]
   dat = []
@@ -144,7 +144,7 @@ def forkat(forknum, clnum, pending):
 @socket_method
 def deletefork(forknum):
   global program
-  logging.error("deletefork %s", forknum)
+  logging.info("deletefork %s", forknum)
   os.unlink(qira_config.TRACE_FILE_BASE+str(int(forknum)))
   del program.traces[forknum]
   push_updates()
@@ -154,7 +154,7 @@ def deletefork(forknum):
 def slice(forknum, clnum):
   trace = program.traces[forknum]
   data = qira_analysis.slice(trace, clnum)
-  logging.error("slice %s %s %s",forknum,clnum, data)
+  logging.info("slice %s %s %s",forknum,clnum, data)
   emit('slice', forknum, data);
 
 @socketio.on('doanalysis', namespace='/qira')
@@ -170,7 +170,7 @@ def analysis(forknum):
 @socket_method
 def connect():
   global program
-  logging.error("client connected %s", program.get_maxclnum())
+  logging.info("client connected %s", program.get_maxclnum())
   push_updates()
 
 @socketio.on('getclnum', namespace='/qira')
@@ -426,11 +426,11 @@ def run_server(largs, lprogram):
   import qira_webstatic
   qira_webstatic.init(lprogram)
 
-  logging.error("****** starting WEB SERVER on %s:%d" , qira_config.HOST, qira_config.WEB_PORT)
+  logging.info("****** starting WEB SERVER on %s:%d" , qira_config.HOST, qira_config.WEB_PORT)
   threading.Thread(target=mwpoller).start()
   try:
     socketio.run(app, host=qira_config.HOST, port=qira_config.WEB_PORT, log_output=False)
   except KeyboardInterrupt:
-    logging.error("*** User raised KeyboardInterrupt")
+    logging.info("*** User raised KeyboardInterrupt")
     exit()
 

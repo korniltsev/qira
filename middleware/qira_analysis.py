@@ -46,7 +46,7 @@ def draw_multigraph(blocks):
 
   graph = pydot.Dot(graph_type='digraph')
 
-  logging.error("adding nodes")
+  logging.info("adding nodes")
   nodes = []
   for a in arr:
     n = pydot.Node(a, shape="box")
@@ -56,8 +56,8 @@ def draw_multigraph(blocks):
   edges = []
   cnts = []
 
-  logging.error("trace size",len(trace))
-  logging.error("realblock count",len(arr))
+  logging.info("trace size",len(trace))
+  logging.info("realblock count",len(arr))
 
   # coalesce loops
   """
@@ -85,12 +85,12 @@ def draw_multigraph(blocks):
     graph.add_edge(e)
   """
 
-  logging.error("adding edges")
+  logging.info("adding edges")
   for i in range(0, len(trace)-1):
     e = pydot.Edge(nodes[trace[i]], nodes[trace[i+1]], label=str(cls[i+1]), headport="n", tailport="s")
     graph.add_edge(e)
 
-  logging.error("drawing png @ /tmp/graph.png")
+  logging.info("drawing png @ /tmp/graph.png")
   graph.write_png('/tmp/graph.png')
   
 
@@ -245,7 +245,7 @@ def do_loop_analysis(blocks):
           # remove the loop from the blocks
           bb = bb[0:i] + bb[i:i+j] + bb[i+j*loopcnt:]
           ab = ab[0:i] + ab[i:i+j] + ab[i+j*loopcnt:]
-          logging.error(loop)
+          logging.info(loop)
           loops.append(loop)
           did_update = True
           break
@@ -567,7 +567,7 @@ if __name__ == "__main__":
   trace = program.add_trace("/tmp/qira_logs/0", 0)
   while not trace.db.did_update():
     time.sleep(0.1)
-  logging.error("loaded")
+  logging.info("loaded")
   program.qira_asm_file = open("/tmp/qira_asm", "r")
   qira_program.Program.read_asm_file(program)
 
@@ -576,7 +576,7 @@ if __name__ == "__main__":
   flow = get_instruction_flow(trace, program, trace.db.get_minclnum(), trace.db.get_maxclnum())
   blocks = get_blocks(flow, True)
   
-  logging.error(slice(trace, 124))
+  logging.info(slice(trace, 124))
 
   #print analyze(t, program)
   #print blocks

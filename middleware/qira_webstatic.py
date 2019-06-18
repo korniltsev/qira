@@ -178,7 +178,7 @@ if qira_config.WITH_STATIC:
   @socket_method
   def make(typ, iaddr):
     iaddr = fhex(iaddr)
-    logging.error("*** make %s at %s",typ, ghex(iaddr))
+    logging.info("*** make %s at %s",typ, ghex(iaddr))
     if typ == 'function':
       program.static.analyzer.make_function_at(program.static, iaddr)
     elif typ == 'code':

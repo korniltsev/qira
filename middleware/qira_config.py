@@ -20,5 +20,6 @@ STATIC_CACHE_BASE = "/tmp/qira_static_cache/"
 
 WEBSOCKET_DEBUG = False
 
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 logging.basicConfig(level=logging.ERROR, format='%(message)s')
 
