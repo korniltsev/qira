@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 from __future__ import print_function
 import qira_config
+from qira_config import log
 import qira_program
 import arch
 import logging
@@ -27,7 +28,7 @@ def ghex(a):
 def draw_multigraph(blocks):
   import pydot
 
-  logging.info("generating traces")
+  log.info("generating traces")
 
   arr = []
   trace = []
@@ -46,7 +47,7 @@ def draw_multigraph(blocks):
 
   graph = pydot.Dot(graph_type='digraph')
 
-  logging.info("adding nodes")
+  log.info("adding nodes")
   nodes = []
   for a in arr:
     n = pydot.Node(a, shape="box")
@@ -56,8 +57,8 @@ def draw_multigraph(blocks):
   edges = []
   cnts = []
 
-  logging.info("trace size",len(trace))
-  logging.info("realblock count",len(arr))
+  log.info("trace size %d",len(trace))
+  log.info("realblock count %d",len(arr))
 
   # coalesce loops
   """
@@ -85,12 +86,12 @@ def draw_multigraph(blocks):
     graph.add_edge(e)
   """
 
-  logging.info("adding edges")
+  log.info("adding edges")
   for i in range(0, len(trace)-1):
     e = pydot.Edge(nodes[trace[i]], nodes[trace[i+1]], label=str(cls[i+1]), headport="n", tailport="s")
     graph.add_edge(e)
 
-  logging.info("drawing png @ /tmp/graph.png")
+  log.info("drawing png @ /tmp/graph.png")
   graph.write_png('/tmp/graph.png')
   
 
@@ -245,7 +246,7 @@ def do_loop_analysis(blocks):
           # remove the loop from the blocks
           bb = bb[0:i] + bb[i:i+j] + bb[i+j*loopcnt:]
           ab = ab[0:i] + ab[i:i+j] + ab[i+j*loopcnt:]
-          logging.info(loop)
+          log.info(loop)
           loops.append(loop)
           did_update = True
           break
@@ -567,7 +568,7 @@ if __name__ == "__main__":
   trace = program.add_trace("/tmp/qira_logs/0", 0)
   while not trace.db.did_update():
     time.sleep(0.1)
-  logging.info("loaded")
+  log.info("loaded")
   program.qira_asm_file = open("/tmp/qira_asm", "r")
   qira_program.Program.read_asm_file(program)
 
@@ -576,7 +577,7 @@ if __name__ == "__main__":
   flow = get_instruction_flow(trace, program, trace.db.get_minclnum(), trace.db.get_maxclnum())
   blocks = get_blocks(flow, True)
   
-  logging.info(slice(trace, 124))
+  log.info(slice(trace, 124))
 
   #print analyze(t, program)
   #print blocks

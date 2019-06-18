@@ -40,6 +40,7 @@ from hashlib import sha1
 
 sys.path.append("../middleware")
 import qira_config
+from qira_config import log
 
 from model import *
 
@@ -72,7 +73,7 @@ class Static:
     loader.load_binary(self)
 
     if self.debug >= 1:
-      logging.error("*** elf loaded")
+      log.info("*** elf loaded")
 
     """
     # create the static cache dir
@@ -227,7 +228,7 @@ class Static:
     for (laddress, llength) in self.base_memory:
       if address == laddress:
         if self.base_memory[(laddress, llength)] != dat:
-          logging.error("*** WARNING, changing segment %s %s",hex(laddress),llength)
+          log.info("*** WARNING, changing segment %s %s",hex(laddress),llength)
         return
 
     # segments should have an idea of segment permission
@@ -237,7 +238,7 @@ class Static:
   def process(self):
     self.analyzer.analyze_functions(self)
     if self.debug >= 1:
-      logging.error("*** static found %d functions", len(self['functions']))
+      log.info("*** static found %d functions", len(self['functions']))
 
 
 # *** STATIC TEST STUFF ***

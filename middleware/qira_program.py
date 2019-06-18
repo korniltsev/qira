@@ -1,6 +1,7 @@
 from __future__ import print_function
 from qira_base import *
 import qira_config
+from qira_config import log
 import qira_analysis
 
 import logging
@@ -52,7 +53,7 @@ class Program:
     self.program = which(prog)
     self.args = args
     self.proghash = sha1(open(self.program, "rb").read()).hexdigest()
-    logging.info("*** program is %s with hash %s", self.program, self.proghash)
+    log.info("*** program is %s with hash %s", self.program, self.proghash)
 
     # this is always initted, as it's the tag repo
     self.static = static2.Static(self.program)
@@ -144,7 +145,7 @@ class Program:
         maybe_path = lib_dir+arch+"/"
         if 'QEMU_LD_PREFIX' not in os.environ and os.path.exists(maybe_path):
           os.environ['QEMU_LD_PREFIX'] = os.path.realpath(maybe_path)
-          logging.info("**** set QEMU_LD_PREFIX to %s", os.environ['QEMU_LD_PREFIX'])
+          log.info("**** set QEMU_LD_PREFIX to %s", os.environ['QEMU_LD_PREFIX'])
 
       if self.fb == 0x28:
         if '/lib/ld-linux.so.3' in progdat:
@@ -184,21 +185,21 @@ class Program:
         raise Exception("binary type "+hex(self.fb)+" not supported")
 
       self.qirabinary = os.path.realpath(self.qirabinary)
-      logging.info("**** using %s for %s", self.qirabinary, hex(self.fb))
+      log.info("**** using %s for %s", self.qirabinary, hex(self.fb))
 
       self.runnable = True
 
     # Windows binaries
     elif progdat[0:2] == b"MZ":
-      logging.info("**** windows binary detected, only running the server")
+      log.info("**** windows binary detected, only running the server")
       pe = struct.unpack("I", progdat[0x3c:0x40])[0]
       wh = struct.unpack("H", progdat[pe+4:pe+6])[0]
       if wh == 0x14c:
-        logging.info("*** 32-bit windows")
+        log.info("*** 32-bit windows")
         self.tregs = arch.X86REGS
         self.fb = 0x03
       elif wh == 0x8664:
-        logging.info("*** 64-bit windows")
+        log.info("*** 64-bit windows")
         self.tregs = arch.X64REGS
         self.fb = 0x3e
       else:
@@ -206,17 +207,17 @@ class Program:
 
     # MACHO FAT binaries
     elif progdat[0x0:0x04] in (MACHO_FAT_MAGIC, MACHO_FAT_CIGAM, MACHO_P200_FAT_MAGIC, MACHO_P200_FAT_CIGAM):
-      logging.info("**** Mach-O FAT (Universal) binary detected")
+      log.info("**** Mach-O FAT (Universal) binary detected")
 
       if progdat[0x04:0x05] == CPU_TYPE_ARM and progdat[0x08:0x09] in CPU_SUBTYPE_ARM:
-        logging.info("**** Mach-O ARM architecture detected")
+        log.info("**** Mach-O ARM architecture detected")
         self.macharch = "arm"
       elif (progdat[0x08:0x0c] == CPU_TYPE_ARM64) or (progdat[0x1c:0x20] == CPU_TYPE_ARM64) or (progdat[0x30:0x34] == CPU_TYPE_ARM64):
-        logging.info("**** Mach-O Aarch64 architecture detected")
+        log.info("**** Mach-O Aarch64 architecture detected")
         self.macharch = "aarch64"
       else:
         self.macharch = ""
-        logging.info("**** Mach-O X86/64 architecture detected")
+        log.info("**** Mach-O X86/64 architecture detected")
 
       if progdat[0x0:0x04] in (MACHO_P200_FAT_MAGIC, MACHO_P200_FAT_CIGAM):
         raise NotImplementedError("Pack200 compressed files are not supported yet")
@@ -238,24 +239,24 @@ class Program:
       if self.macharch == "arm" or self.macharch == "aarch64":
         raise NotImplementedError("ARM/Aarch64 Support is not implemented")
       if not os.path.isfile(self.pintool):
-        logging.info("Running a Mach-O FAT (Universal) binary requires PIN support. See tracers/pin_build.sh")
+        log.info("Running a Mach-O FAT (Universal) binary requires PIN support. See tracers/pin_build.sh")
         exit()
       raise NotImplementedError("Mach-O FAT (Universal) binary not supported")
       self.runnable = True
 
     # MACHO binaries
     elif progdat[0x0:0x04] in (MACHO_MAGIC_64, MACHO_CIGAM_64, MACHO_MAGIC, MACHO_CIGAM):
-      logging.info("**** Mach-O binary detected")
+      log.info("**** Mach-O binary detected")
 
       if progdat[0x04:0x05] == CPU_TYPE_ARM and progdat[0x08:0x09] in CPU_SUBTYPE_ARM:
-        logging.info("**** Mach-O ARM architecture detected")
+        log.info("**** Mach-O ARM architecture detected")
         self.macharch = "arm"
       elif progdat[0x04:0x05] == CPU_TYPE_ARM and progdat[0x08:0x09] in CPU_SUBTYPE_ARM64:
-        logging.info("**** Mach-O Aarch64 architecture detected")
+        log.info("**** Mach-O Aarch64 architecture detected")
         self.macharch = "aarch64"
       else:
         self.macharch = ""
-        logging.info("**** Mach-O X86/64 architecture detected")
+        log.info("**** Mach-O X86/64 architecture detected")
 
       if progdat[0x0:0x04] in (MACHO_MAGIC_64, MACHO_CIGAM_64):
         if progdat[0x0:0x04] == MACHO_CIGAM_64:
@@ -280,7 +281,7 @@ class Program:
       if self.macharch == "arm" or self.macharch == "aarch64":
         raise NotImplementedError("ARM/Aarch64 Support is not implemented")
       if not os.path.isfile(self.pintool):
-        logging.info("Running a Mach-O binary requires PIN support. See tracers/pin_build.sh")
+        log.info("Running a Mach-O binary requires PIN support. See tracers/pin_build.sh")
         exit()
       self.runnable = True
     else:
@@ -288,7 +289,7 @@ class Program:
 
   def clear(self):
     # probably always good to do except in development of middleware
-    logging.info("*** deleting old runs")
+    log.info("*** deleting old runs")
     self.delete_old_runs()
 
     # getting asm from qemu
@@ -389,8 +390,8 @@ class Program:
     else:
       eargs = [self.qirabinary]+self.defaultargs+args+[self.program]+self.args
     if not os.path.exists(eargs[0]):
-      logging.info("\nQIRA tracer %s not found", eargs[0])
-      logging.info("Your install is broken. Check ./install.sh for issues")
+      log.info("\nQIRA tracer %s not found", eargs[0])
+      log.info("Your install is broken. Check ./install.sh for issues")
       exit(-1)
     if shouldfork:
       if os.fork() != 0:
@@ -489,12 +490,12 @@ class Trace:
                 # is it safe to assume 4096 byte pages?
 
               st = "*** mapping %s %s sz:0x%x off:0x%x @ 0x%X" % (sha1(alldat).hexdigest(), files[fil], sz, off, return_code)
-              logging.info(st)
+              log.info(st)
               dat = alldat[off:off+sz]
 
               self.program.static.add_memory_chunk(return_code, dat)
             except Exception as e:
-              logging.exception("err")
+              logging.info("err")
 
       except:
         pass
@@ -539,10 +540,10 @@ class Trace:
 
     try:
       forkbase = get_forkbase_from_log(self.forknum)
-      logging.info("*** using base %d for %d", forkbase, self.forknum)
+      log.info("*** using base %d for %d", forkbase, self.forknum)
       f = open(qira_config.TRACE_FILE_BASE+str(forkbase)+"_base", 'r')
     except Exception as e:
-      logging.exception("*** base file issue")
+      logging.info("*** base file issue")
       # done
       return
 
@@ -572,7 +573,7 @@ class Trace:
               off_map[int(offset, 16)] = images_dir+"/"+image+"/"+offset
             img_map[unquote(image)] = off_map
       except Exception as e:
-        logging.exception("Exception while dealing with _images/:")
+        logging.info("Exception while dealing with _images/:")
 
     for ln in f.read().split("\n"):
       ln = ln.split(" ")
@@ -595,6 +596,6 @@ class Trace:
             f.seek(offset)
             dat = f.read(se-ss)
       except Exception as e:
-        logging.exception("Failed to get %s offset %d", fn, offset)
+        logging.info("Failed to get %s offset %d", fn, offset)
         continue
       self.program.static.add_memory_chunk(ss, dat)

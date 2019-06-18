@@ -14,6 +14,7 @@ from flask import Flask, Response, redirect, request
 from flask_socketio import SocketIO, emit
 
 from qira_base import *
+from qira_config import log
 import json
 import logging
 import os
@@ -178,7 +179,7 @@ if qira_config.WITH_STATIC:
   @socket_method
   def make(typ, iaddr):
     iaddr = fhex(iaddr)
-    logging.info("*** make %s at %s",typ, ghex(iaddr))
+    log.info("*** make %s at %s",typ, ghex(iaddr))
     if typ == 'function':
       program.static.analyzer.make_function_at(program.static, iaddr)
     elif typ == 'code':

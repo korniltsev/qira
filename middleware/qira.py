@@ -14,6 +14,7 @@ import qira_config
 import qira_socat
 import qira_program
 import qira_webserver
+from qira_config import log
 
 
 if __name__ == '__main__':
@@ -43,9 +44,12 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   # validate arguments
-  if args.quiet:
-    logging.getLogger().setLevel(logging.FATAL)
-
+  if not args.quiet:
+    log.setLevel(logging.INFO)
+    log.addHandler(logging.StreamHandler())
+  else:
+    log.setLevel(logging.CRITICAL)
+  print(log.handlers)
   if args.web_port < 1 or args.web_port > 65535:
     raise Exception("--web-port must be a valid port number (1-65535)")
   if args.socat_port < 1 or args.socat_port > 65534:
@@ -57,7 +61,7 @@ if __name__ == '__main__':
 
   # handle arguments
   if sys.platform == "darwin":
-    logging.info("*** running on darwin, defaulting to --pin")
+    log.info("*** running on darwin, defaulting to --pin")
     qira_config.USE_PIN = True
   else:
     qira_config.USE_PIN = args.pin
@@ -72,10 +76,10 @@ if __name__ == '__main__':
     qira_config.TRACE_LIBRARIES = True
 
   if args.static:
-    logging.info("*** using static")
+    log.info("*** using static")
     qira_config.WITH_STATIC = True
   if args.flush_cache:
-    logging.info("*** flushing caches")
+    log.info("*** flushing caches")
     os.system("rm -rfv /tmp/qira*")
 
   # qemu args from command line
@@ -94,14 +98,14 @@ if __name__ == '__main__':
       raise Exception("can't run as server if QIRA is already running")
   except:
     is_qira_running = 0
-    logging.info("no qira server found, starting it")
+    log.info("no qira server found, starting it")
     program.clear()
 
   # start the binary runner
   if args.server:
     qira_socat.start_bindserver(program, qira_config.SOCAT_PORT, -1, 1, True)
   else:
-    logging.info("**** running %s",program.program)
+    log.info("**** running %s",program.program)
     program.execqira(shouldfork=not is_qira_running)
 
   if not is_qira_running:
