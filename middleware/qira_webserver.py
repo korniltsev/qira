@@ -27,7 +27,7 @@ def socket_method(func):
 
       # print slow calls, slower than 50ms
       if tm > 50 or qira_config.WEBSOCKET_DEBUG:
-        log.info("SOCKET %6.2f ms in %-20s with" % (tm, func.__name__), args)
+        log.info("SOCKET %6.2f ms in %-20s with %s", tm, func.__name__, args)
       return ret
     except Exception as e:
       log.info("ERROR %s", e)
