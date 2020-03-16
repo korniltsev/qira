@@ -1,3 +1,5 @@
+venv_mac/
+.idea/
 web/.meteor/local
 .*.swp
 .*.swo

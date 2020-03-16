@@ -63,6 +63,17 @@ def push_trace_update(i):
   socketio.emit('strace', {'forknum': t.forknum, 'dat': t.strace}, namespace='/qira')
   t.needs_update = False
 
+def push_vmmap(i, full):
+  t = program.traces[i]
+  if t.loaded_vmmap == '':
+    t.loaded_vmmap = t.load_vmmap()
+    if t.loaded_vmmap != '':
+      socketio.emit('vmmap', {'forknum': t.forknum, 'dat': t.loaded_vmmap}, namespace='/qira')
+  elif full:
+    if t.loaded_vmmap != '':
+      socketio.emit('vmmap', {'forknum': t.forknum, 'dat': t.loaded_vmmap}, namespace='/qira')
+
+
 def push_updates(full = True):
   socketio.emit('pmaps', program.get_pmaps(), namespace='/qira')
   socketio.emit('maxclnum', program.get_maxclnum(), namespace='/qira')
@@ -71,6 +82,7 @@ def push_updates(full = True):
     return
   for i in program.traces:
     push_trace_update(i)
+    push_vmmap(i, True)
 
 def mwpoll():
   # poll for new traces, call this every once in a while
@@ -90,6 +102,7 @@ def mwpoll():
       t.read_strace_file()
       socketio.emit('strace', {'forknum': t.forknum, 'dat': t.strace}, namespace='/qira')
       did_update = True
+      push_vmmap(tn, False)
 
     # trace specific stuff
     if program.traces[tn].needs_update:

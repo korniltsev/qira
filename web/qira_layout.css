@@ -84,8 +84,8 @@ td {
 }
 
 .panelthing {
-  border: 1px solid gray;
-  background-color: #DDDDDD;
+  border: none;
+  background-color: #ebebeb;
 }
 
 /* instruction dump */
@@ -151,4 +151,18 @@ td {
   left: 50%;
 }
 
-
+#vmmap {
+  /*height: 100%;*/
+  /*overflow-y: scroll;*/
+}
+.vmmap {
+  padding: 6px 0;
+}
+.vmmap_line {
+  padding: 0 8px;
+  /*margin: 0 8px;*/
+  white-space: nowrap;
+}
+.vmmap_highlight {
+  background: #FF7777;
+}

@@ -404,6 +404,7 @@ class Trace:
     self.program = program
     self.db = qiradb.PyTrace(fn, forknum, r1, r2, r3)
     self.load_base_memory()
+    self.loaded_vmmap = ''
 
     # analysis stuff
     self.maxclnum = None
@@ -527,6 +528,13 @@ class Trace:
         self.needs_update = True
 
         #print "analysis is ready"
+
+  def load_vmmap(self):
+    try:
+      with open(qira_config.TRACE_FILE_BASE + str(self.forknum) + "_vmmap", 'r') as f:
+        return f.read()
+    except:
+      return ''
 
   def load_base_memory(self):
     def get_forkbase_from_log(n):

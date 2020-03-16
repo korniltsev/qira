@@ -4,7 +4,7 @@
 }
 
 .wcPanelBackground {
-  background-color: #aaa;
+  background-color: #dcdcdc;
 }
 
 .wcPanelBackground .wcCenter {
@@ -82,8 +82,8 @@
 }
 
 .wcSplitterBar {
-  border: 1px solid black;
-  background-color: black;
+  /*border: 1px solid black;*/
+  background-color: #767676;
 }
 
 .wcSplitterBarStatic {
@@ -131,24 +131,24 @@
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
-  background-color: black;
+  background-color: #dadada;
 }
 
 ::-webkit-scrollbar-corner {
-  background-color: #111;
+  background-color: #d6d6d6;
 }
 
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 0 rgba(0,0,0,0.5);
   border-radius: 0px;
-  background-color: #111;
+  background-color: #d6d6d6;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 2px;
-  background-color: #444;
-  border: 2px outset gray;
-  -webkit-box-shadow: inset 0 0 0 rgba(0,0,0,0.7);
+  background-color: #d3d3d3;
+  border: 1px outset #9d9d9d;
+  -webkit-box-shadow: inset 0 0 0 rgba(127, 127, 127, 0.7);
 }
 
 .wcMenuList, .context-menu-list {

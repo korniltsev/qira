@@ -98,6 +98,10 @@
 
 /* regviewer and datachanges */
 
+#dynamicroot {
+  height: 100%;
+  max-width: 300px;
+}
 .register {
   text-align: left !important;
   min-width: 42px !important;
@@ -107,7 +111,7 @@
 
 #regviewer {
   /*background-color: #DDDDDD;*/
-  padding: 2px;
+  padding: 12px ;
   white-space: normal;
   /*border: 1px solid black;*/
   /*width: 620px;*/
@@ -116,7 +120,7 @@
 
 #datachanges {
   font-family: monospace;
-  padding: 2px;
+  padding: 12px;
   /*min-height: 15px;
   width: 620px;*/
   height: 1.2em;

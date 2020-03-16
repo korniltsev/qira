@@ -1,7 +1,7 @@
 // Scripts to load after UI has been initialized.
 var scripts = ["/client/compatibility/base.js", "/client/compatibility/highlight.js",
                "/client/controls.js", "/client/ida.js", "/client/idump.js", "/client/regmem.js",
-               "/client/vtimeline.js", "/client/strace.js", "/client/haddrline.js",
+               "/client/vtimeline.js", "/client/strace.js", "/client/vmmap.js", "/client/haddrline.js",
                "/client/static/static.js", "/client/static/graph.js"];
 
 $(document).ready(function() {
@@ -20,6 +20,7 @@ $(document).ready(function() {
   var dynamicDef = $.Deferred();
   var idumpDef = $.Deferred();
   var timelineDef = $.Deferred();
+  var vmmapDef = $.Deferred();
 
   myDocker.registerPanelType('Timeline', {
     onCreate: function(myPanel, options) {
@@ -78,6 +79,13 @@ $(document).ready(function() {
     },
   });
 
+  myDocker.registerPanelType('vmmap', {
+    onCreate: function(myPanel, options) {
+      myPanel.layout().addItem($("<div id='vmmap'></div>"));
+      vmmapDef.resolve();
+    },
+  });
+
   var timelinePanel = myDocker.addPanel("Timeline", wcDocker.DOCK.LEFT, null);
 
   // Limit the width of the vtimeline. Scrollbar exists if it overflows.
@@ -92,11 +100,17 @@ $(document).ready(function() {
   }
   
   var idumpPanel = myDocker.addPanel("idump", wcDocker.DOCK.BOTTOM, controlPanel);
-  var dynamicPanel = myDocker.addPanel("Dynamic", wcDocker.DOCK.BOTTOM, idumpPanel);
+
   //dynamicPanel.maxSize(0, 82);
 
-  var memoryPanel = myDocker.addPanel("Memory", wcDocker.DOCK.BOTTOM, dynamicPanel, {h: 400});
-  var stracePanel = myDocker.addPanel("strace", wcDocker.DOCK.BOTTOM, dynamicPanel, {h: 200});
+  var stracePanel = myDocker.addPanel("strace", wcDocker.DOCK.BOTTOM, idumpPanel, {h: 200});
+
+  var memoryPanel = myDocker.addPanel("Memory", wcDocker.DOCK.BOTTOM, stracePanel);
+
+  var vmmapPanel = myDocker.addPanel("vmmap", wcDocker.DOCK.RIGHT, memoryPanel);
+
+  var dynamicPanel = myDocker.addPanel("Dynamic", wcDocker.DOCK.RIGHT, idumpPanel, {w: 300});
+
 
 
   // apply the panel defaults
@@ -109,6 +123,7 @@ $(document).ready(function() {
       x.scrollable(false, false)
     }
   });
+  vmmapPanel.scrollable(true, true);//todo less ugly
 
   function is_done() {
     p("loading UI");
@@ -119,9 +134,9 @@ $(document).ready(function() {
   }
 
   if (has_static) {
-    $.when(timelineDef, idumpDef, memoryDef, straceDef, controlDef, dynamicDef, cfgDef, tagsDef).done(is_done);
+    $.when(timelineDef, idumpDef, memoryDef, straceDef, controlDef, dynamicDef, vmmapDef, cfgDef, tagsDef).done(is_done);
   } else {
-    $.when(timelineDef, idumpDef, memoryDef, straceDef, controlDef, dynamicDef).done(is_done);
+    $.when(timelineDef, idumpDef, memoryDef, straceDef, controlDef, dynamicDef, vmmapDef).done(is_done);
   }
 });
 

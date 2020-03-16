@@ -126,7 +126,9 @@ Session.setDefault("flat", false);
 
 // keyboard shortcuts
 window.onkeydown = function(e) {
-  if (!$(e.target).is("input") && !((e.ctrlKey || e.metaKey) && e.keyCode === 67)) e.preventDefault();
+  let isInput = $(e.target).is("input");
+  if (isInput) return;
+  if (!isInput && !((e.ctrlKey || e.metaKey) && e.keyCode === 67)) e.preventDefault();
   //p(e.keyCode);
   //p(e);
   if (e.ctrlKey == true) return;

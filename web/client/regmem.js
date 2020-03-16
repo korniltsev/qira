@@ -68,7 +68,7 @@ function on_memory(msg) { DS("memory");
       var exclass = "data_"+bn_add(addr, i);
       var exclassmore = exclass + " addr addr_"+v;
       var minwidth = 84;
-      if (PTRSIZE == 8) minwidth = 172;
+      if (PTRSIZE == 8) minwidth = 158;
       html += '<td colspan="'+PTRSIZE+'"><div style="overflow: hidden; width:'+minwidth+'px" id="'+exclass+'"><div class="data hexdump'+a+' '+exclassmore+'">'+v+"</div></div></td>";
     } else {
       for (var j = 0; j < PTRSIZE; j++) {

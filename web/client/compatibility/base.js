@@ -50,13 +50,20 @@ function get_data_type(v, more) {
   // haxx
   var pmaps = Session.get('pmaps');
   var a = pmaps[bn_round(v, 3)];
-  if (a === undefined) return "";
-  else {
-    if (more !== undefined) {
-      return "data"+a+" addr addr_"+v;
-    } else {
-      return "data"+a;
+  if (a === undefined) {
+    var forknum = Session.get("forknum");
+    var page = vmmap_find_entry(forknum, v);
+    if (page === undefined) {
+      return "";
     }
+    if ((page.iperm & 4) === 4 ) a = 'instruction';
+    else if ((page.iperm & 3) === 3) a = 'memory';
+    else if ((page.iperm & 1) === 1) a = 'romemory';
+  }
+  if (more !== undefined) {
+    return "data" + a + " addr addr_" + v;
+  } else {
+    return "data" + a;
   }
 }
 
