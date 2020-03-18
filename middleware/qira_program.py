@@ -418,6 +418,7 @@ class Trace:
     self.strace = []
     self.mapped = []
 
+    self.keep_analysis_thread = True
     threading.Thread(target=self.analysis_thread).start()
 
   def fetch_raw_memory(self, clnum, address, ln):
@@ -503,8 +504,8 @@ class Trace:
     self.strace = ret
 
   def analysis_thread(self):
-    #print "*** started analysis_thread"
-    while 1:
+    print("*** started analysis_thread", self.forknum)
+    while self.keep_analysis_thread:
       time.sleep(0.2)
       # so this is done poorly, analysis can be incremental
       if self.maxclnum == None or self.db.get_maxclnum() != self.maxclnum:
@@ -528,6 +529,7 @@ class Trace:
         self.needs_update = True
 
         #print "analysis is ready"
+    print("*** ended analysis_thread", self.forknum)
 
   def load_vmmap(self):
     try:
