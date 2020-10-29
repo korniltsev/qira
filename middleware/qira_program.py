@@ -5,6 +5,7 @@ import qira_analysis
 
 import os
 import shutil
+import resource
 import sys
 import subprocess
 import threading
@@ -379,6 +380,15 @@ class Program:
     self.traces[i] = Trace(fn, i, self, self.tregs[1], len(self.tregs[0]), self.tregs[2])
     return self.traces[i]
 
+  def disable_aslr(self):
+    try:
+      if sys.platform == 'linux':
+        ADDR_NO_RANDOMIZE = 0x0040000
+        ctypes.CDLL('libc.so.6').personality(ADDR_NO_RANDOMIZE)
+      resource.setrlimit(resource.RLIMIT_STACK, (-1, -1))
+    except Exception as e:
+        print("Could not disable ASLR", e)
+
   def execqira(self, args=[], shouldfork=True):
     if self.runnable == False:
       return
@@ -394,6 +404,7 @@ class Program:
     if shouldfork:
       if os.fork() != 0:
         return
+    self.disable_aslr()
     #print "***",' '.join(eargs)
     os.execvp(eargs[0], eargs)
 
