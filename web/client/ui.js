@@ -91,11 +91,12 @@ $(document).ready(function() {
     var flatPanel = myDocker.addPanel("Tags", wcDocker.DOCK.BOTTOM, cfgPanel, {h: 120});
   }
   
-  var idumpPanel = myDocker.addPanel("idump", wcDocker.DOCK.BOTTOM, controlPanel);
-  var dynamicPanel = myDocker.addPanel("Dynamic", wcDocker.DOCK.BOTTOM, idumpPanel);
+  var dynamicPanel = myDocker.addPanel("Dynamic", wcDocker.DOCK.BOTTOM, controlPanel);
+  var idumpPanel = myDocker.addPanel("idump", wcDocker.DOCK.LEFT, dynamicPanel);
+
   //dynamicPanel.maxSize(0, 82);
 
-  var memoryPanel = myDocker.addPanel("Memory", wcDocker.DOCK.BOTTOM, dynamicPanel, {h: 400});
+  var memoryPanel = myDocker.addPanel("Memory", wcDocker.DOCK.BOTTOM, idumpPanel, {h: 400});
   var stracePanel = myDocker.addPanel("strace", wcDocker.DOCK.BOTTOM, dynamicPanel, {h: 200});
 
 
@@ -109,6 +110,7 @@ $(document).ready(function() {
       x.scrollable(false, false)
     }
   });
+  dynamicPanel.scrollable(false, true);
 
   function is_done() {
     p("loading UI");

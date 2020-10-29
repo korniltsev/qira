@@ -112,6 +112,7 @@
   /*border: 1px solid black;*/
   /*width: 620px;*/
   /*max-height: 5%;*/
+  padding: 20px 12px;
 }
 
 #datachanges {
@@ -119,7 +120,9 @@
   padding: 2px;
   /*min-height: 15px;
   width: 620px;*/
-  height: 1.2em;
+  /* height: 1.2em; */
+  padding: 20px 12px;
+  min-height: 40px;
 }
 
 .datachanges {
@@ -242,7 +245,7 @@
   overflow-x: hidden;
   padding: 5px;
   white-space: nowrap;
-  height: 150px;
+  height: 250px;
   /*height: 17%;*/
 }
 

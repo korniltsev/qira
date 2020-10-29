@@ -145,7 +145,7 @@ function on_registers(msg) { DS("registers");
     regviewer += '<div class="reg '+r.regactions+'">'+
         '<div class="register data data_'+hex(r.address)+'" id="data_'+hex(r.address)+'" style="color:'+regcolors[r.num]+'">'+r.display_name+': </div>'+
         '<span class="'+exclass+'">'+r.value+'</span>'+
-      '</div>';
+      '</div><br>';
   }
   $('#regviewer').html(regviewer);
   rehighlight();
@@ -172,7 +172,7 @@ function on_clnum(msg) { DS("clnum");
         '<span class="'+get_data_type(dc.address, true)+'">'+dc.address+'</span> '+
         ((dc.type == "S")?'&lt;--':'--')+' '+
         '<span class="'+get_data_type(dc.data, true)+'">'+dc.data+'</span> '+
-      '</div> ';
+      '</div> <br>';
   }
   $('#datachanges').html(datachanges);
 } stream.on('clnum', on_clnum);
