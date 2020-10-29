@@ -124,7 +124,19 @@ Deps.autorun(function() { DA("emit getregisters");
   stream.emit('getregisters', forknum, clnum-1);
 });
 
+function dump_stack(regs) {
+  console.log(regs);
+  var sp = regs.find(function(elem) {
+      return elem.name == "RSP" || elem.name == "ESP";
+  });
+  if (sp) {
+    update_dview(sp.value);
+  }
+}
 function on_registers(msg) { DS("registers");
+  if (!current_regs) { // on first load
+    dump_stack(msg);
+  }
   current_regs = msg;
   redraw_reg_flags();
   var tsize = msg[0]['size'];
