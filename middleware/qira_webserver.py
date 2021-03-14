@@ -1,4 +1,12 @@
 from __future__ import print_function
+
+# from heapinspect import *
+from heapinspect.core import *
+# from heapinspect import proc
+
+from hi import QiraProcForHI
+
+
 from qira_base import *
 import traceback
 import qira_config
@@ -352,6 +360,70 @@ def setfunctionargswrap(func, args):
     function.nargs = int(args.split()[1])
     if abi != None:
       function.abi = abi
+
+
+@socketio.on('hi', namespace='/qira')
+@socket_method
+def hi(forknum, clnum):
+  global program
+
+
+
+
+
+
+
+    # def parse_vmmap(self, data):
+    #   maps = []
+    #   # 00400000-0040b000 r-xp 00000000 08:02 538840  /path/to/file
+    #   pattern = re.compile(
+    #     "([0-9a-f]*)-([0-9a-f]*) ([rwxps-]*)(?: [^ ]*){3} *(.*)"
+    #   )
+    #   out = data
+    #   matches = pattern.findall(out)
+    #   if matches:
+    #     for (start, end, perm, mapname) in matches:
+    #       start = int("0x%s" % start, 16)
+    #       end = int("0x%s" % end, 16)
+    #       if mapname == "":
+    #         mapname = "mapped"
+    #       maps.append(proc.Map(start, end, perm, mapname))
+    #   return maps
+
+
+
+
+  p = QiraProcForHI(program, forknum, clnum)
+  # for i in p.vmmap:
+  #   print(i)
+
+  hi = HeapInspector(0xdead, p)
+
+  print('hi.main_arena_offset', hi.main_arena_offset)
+  print('main_arena', hi.main_arena)
+
+  # for i in hi.fastbins:
+  #   print(i)
+
+  # for i in hi.tcache_chunks:
+  #   print(i)
+  hs = HeapShower(hi)
+  res = ''
+  res += hs.fastbins + '\n'
+  res += hs.unsortedbins + '\n'
+  res += hs.smallbins + '\n'
+  res += hs.largebins + '\n'
+  res += hs.tcache_chunks + '\n'
+  # hs = PrettyPrinter(hi)
+  # print(hs.basic)
+  # print(hs.fastbins)
+  # print(hs.all)
+  # hs.
+  # print('hi', clnum)
+  print(res)
+  # emit('hi_result', [res])
+  socketio.emit('hi_result', json.dumps([forknum, clnum, res]), namespace='/qira')
+
 
 @socketio.on('getregisters', namespace='/qira')
 @socket_method

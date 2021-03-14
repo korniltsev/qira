@@ -32,3 +32,11 @@
   width: 100%;
 }
 
+#hi_header {
+  display: flex;
+  padding: 4px;
+}
+#hi_warning{
+  padding-left: 8px;
+  padding-top: 4px;
+}

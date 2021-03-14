@@ -73,18 +73,18 @@ Deps.autorun(function() { DA("send user names and comments to ida");
   }
 });
 
-Deps.autorun(function() { DA("send trail to ida");
-  var trail = Session.get("trail");
-  if (trail !== undefined) {
-    var s = "settrail ";
-    for (var i = 0; i < trail.length; i++) {
-      var cldiff = trail[i][0];
-      var addr = trail[i][1];
-      if (-15 < cldiff && cldiff <= 0) {
-        s += cldiff + "," + addr + ";";
-      }
-    }
-    p(s);
-    send_cmd(s);
-  }
-});
+// Deps.autorun(function() { DA("send trail to ida");
+//   var trail = Session.get("trail");
+//   if (trail !== undefined) {
+//     var s = "settrail ";
+//     for (var i = 0; i < trail.length; i++) {
+//       var cldiff = trail[i][0];
+//       var addr = trail[i][1];
+//       if (-15 < cldiff && cldiff <= 0) {
+//         s += cldiff + "," + addr + ";";
+//       }
+//     }
+//     p(s);
+//     send_cmd(s);
+//   }
+// });

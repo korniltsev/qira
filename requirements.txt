@@ -3,7 +3,7 @@ certifi==2019.3.9
 chardet==3.0.4
 Click==7.0
 Cython==0.29.6
-Flask==1.0.2
+Flask==1.1.2
 Flask-SocketIO==3.3.2
 gevent==1.4.0
 greenlet==0.4.15
@@ -25,4 +25,5 @@ six==1.12.0
 socketIO-client==0.7.2
 urllib3==1.24.1
 websocket-client==0.56.0
-Werkzeug==0.15.1
+Werkzeug==1.0.1
+six

@@ -418,6 +418,8 @@ class Trace:
     self.forknum = forknum
     self.program = program
     self.db = qiradb.PyTrace(fn, forknum, r1, r2, r3)
+    self.mapped_base = []
+    self.heap_base = None
     self.load_base_memory()
 
     # analysis stuff
@@ -440,6 +442,7 @@ class Trace:
 
   # proxy the db call and fill in base memory
   def fetch_memory(self, clnum, address, ln):
+    # print('fetch_memory', clnum, hex(address), hex(ln))
     mem = self.db.fetch_memory(clnum, address, ln)
     dat = {}
     for i in range(ln):
@@ -466,6 +469,8 @@ class Trace:
     f = ''.join(filter(lambda x: ord(x) < 0x80, f))
     ret = []
     files = {}
+    heap_min = 0xffffffffffffffffffffffff
+    heap_max = 0
     for ff in f.split("\n"):
       if ff == '':
         continue
@@ -510,12 +515,21 @@ class Trace:
               self.program.static.add_memory_chunk(return_code, dat)
             except Exception as e:
               print(e)
+        elif fxn == 'brk':
+          heap_min = min(heap_min, return_code)
+          heap_max = max(heap_max, return_code)
+          print('brk', hex(return_code))
+
+
+
 
       except:
         pass
       ret.append({"clnum": clnum, "pid":pid, "sc": sc})
 
     self.strace = ret
+    self.heap_min = heap_min
+    self.heap_max = heap_max
 
   def analysis_thread(self):
     print("*** started analysis_thread", self.forknum)
@@ -592,6 +606,7 @@ class Trace:
 
     for ln in f.read().split("\n"):
       ln = ln.split(" ")
+      # print('ln', ln)
       if len(ln) < 3:
         continue
       (ss, se) = ln[0].split("-")
@@ -600,6 +615,7 @@ class Trace:
       offset = int(ln[1], 16)
       fn = ' '.join(ln[2:])
 
+      self.mapped_base.append((ss, se, offset, fn))
       try:
         if fn in img_map:
           off = max(i for i in img_map[fn].iter_keys() if i <= offset)

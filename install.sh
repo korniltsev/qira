@@ -26,7 +26,7 @@ else
 fi
 
 echo "building python venv"
-virtualenv -p /usr/bin/python venv
+virtualenv -p /usr/bin/python3 venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install --upgrade -r requirements.txt
