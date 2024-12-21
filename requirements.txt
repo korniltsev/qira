@@ -29,3 +29,4 @@ websocket-client==0.56.0
 Werkzeug==2.0.0
 eventlet==0.33.1
 six
+dnspython==2.2.1
