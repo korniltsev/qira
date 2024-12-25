@@ -8,7 +8,7 @@ if [ ! -d qemu/$dst ]; then
 fi
 
 cd qemu/$dst
-./configure --target-list=i386-linux-user,x86_64-linux-user,arm-linux-user,ppc-linux-user,aarch64-linux-user,mips-linux-user,mipsel-linux-user \
+./configure --disable-werror --target-list=i386-linux-user,x86_64-linux-user,arm-linux-user,ppc-linux-user,aarch64-linux-user,mips-linux-user,mipsel-linux-user \
     --enable-tcg-interpreter \
     --enable-debug-tcg       \
     --cpu=x86_64             \
