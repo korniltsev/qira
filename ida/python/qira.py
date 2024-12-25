@@ -1,6 +1,19 @@
 import idaapi
 import threading
-import time
+
+try:
+    from idaapi import to_ea as idaapi_to_ea
+except:
+    from idaapi import toEA as idaapi_to_ea
+try:
+    from idaapi import is_code as idaapi_is_code
+except:
+    from idaapi import isCode as idaapi_is_code
+try:
+    from idaapi import get_flags as idaapi_get_flags
+except:
+    from idaapi import getFlags as idaapi_get_flags
+
 
 wsserver = None
 qira_address = None
@@ -16,9 +29,9 @@ def handle_message_queue():
 
     if dat[0] == "setaddress" and dat[1] != "undefined":
       try:
-        a = idaapi.toEA(0, int(str(dat[1][2:]),16))
+        a = idaapi_to_ea(0, int(str(dat[1][2:]),16))
         jump_to(a)
-      except e:
+      except:
         idaapi.msg("[QIRA Plugin] Error processing the address\n")
 
 def start_server():
@@ -73,7 +86,7 @@ class MyIDAViewWrapper(idaapi.IDAViewWrapper):
   def OnViewCurpos(self):
     self.addr = idaapi.get_screen_ea()
     if (self.old_addr != self.addr):
-      if (idaapi.isCode(idaapi.getFlags(self.addr))):
+      if idaapi_is_code(idaapi_get_flags(self.addr)):
         # don't update the address if it's already the qira address or None
         if (self.addr is not None) and (self.addr != qira_address):
           #idaapi.msg("[QIRA Plugin] Qira Address %x \n" % (self.addr))
@@ -106,6 +119,11 @@ class uihook(idaapi.UI_Hooks):
   def current_tform_changed(self, a1, a2):
     #print "tform", idaapi.get_tform_title(a1)
     tm = MyIDAViewWrapper(idaapi.get_tform_title(a1))
+    if tm.Bind():
+      self.binds.append(tm)
+    return 0
+  def current_widget_changed(self, a1, a2):
+    tm = MyIDAViewWrapper(idaapi.get_widget_title(a1))
     if tm.Bind():
       self.binds.append(tm)
     return 0
