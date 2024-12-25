@@ -12,7 +12,7 @@ import threading
 import time
 import collections
 from hashlib import sha1
-
+import ctypes
 from subprocess import (Popen, PIPE)
 import json
 
@@ -388,7 +388,7 @@ class Program:
     try:
       if sys.platform == 'linux':
         ADDR_NO_RANDOMIZE = 0x0040000
-        ctypes.CDLL('libc.so.6').personality(ADDR_NO_RANDOMIZE)
+        # ctypes.CDLL('libc.so.6').personality(ADDR_NO_RANDOMIZE)
       resource.setrlimit(resource.RLIMIT_STACK, (-1, -1))
     except Exception as e:
         print("Could not disable ASLR", e)
