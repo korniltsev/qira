@@ -50,7 +50,8 @@ def jump_to(a):
 def ws_send(msg):
   global wsserver
   if (wsserver is not None) and (msg is not None):
-    for conn in wsserver.connections.itervalues():
+    for k in wsserver.connections:
+      conn = wsserver.connections[k]
       conn.sendMessage(msg)
 
 def update_address(addr_type, addr):
@@ -148,11 +149,11 @@ class qiraplugin_t(idaapi.plugin_t):
       ws_send("setname 0x%x %s" % (idaapi.get_nlist_ea(i), idaapi.get_nlist_name(i)))
 
     # sync comment
-    addr = idaapi.get_segm_base(idaapi.get_first_seg())
-    while addr != idaapi.BADADDR:
-      for rpt in [True, False]:
-        update_comment(addr, rpt)
-      addr = idaapi.nextaddr(addr)
+    # addr = idaapi.get_segm_base(idaapi.get_first_seg())
+    # while addr != idaapi.BADADDR:
+    #   for rpt in [True, False]:
+    #     update_comment(addr, rpt)
+    #   addr = idaapi.nextaddr(addr)
 
   def term(self):
     global wsserver
