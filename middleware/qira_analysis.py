@@ -10,12 +10,15 @@ import struct
 
 from PIL import Image
 import base64
+
+from static2.model import ABITYPE
+
 try:
   from StringIO import StringIO
 except ImportError:
   from io import BytesIO as StringIO
 
-from static2 import static2
+# from static2 import static2
 
 def ghex(a):
   if a == None:
@@ -315,14 +318,14 @@ def guess_calling_conv(program,readregs,readstack):
   regs = program.tregs[0]
   readregs = list(map(lambda x: regs[x], readregs)) #convert read regs into strings
 
-  for abi in filter(lambda x:x[0] != "_",static2.ABITYPE.__dict__):
+  for abi in filter(lambda x:x[0] != "_",ABITYPE.__dict__):
     if abi == 'UNKNOWN':
       continue
 
     regs_cpy = [r for r in readregs]
 
-    consistent = len(regs_cpy) <= len(static2.ABITYPE.__dict__[abi][0]) #we are consistent with this ABI
-    for reg in static2.ABITYPE.__dict__[abi][0]:
+    consistent = len(regs_cpy) <= len(ABITYPE.__dict__[abi][0]) #we are consistent with this ABI
+    for reg in ABITYPE.__dict__[abi][0]:
       if regs_cpy and reg in regs_cpy:
         regs_cpy.remove(reg)
       else:
@@ -398,7 +401,7 @@ def display_call_args(instr,trace,clnum):
 
   endclnum = get_last_instr(trace.dmap,clnum)
 
-  args,outp = static2.ABITYPE.__dict__[func.abi]
+  args,outp = ABITYPE.__dict__[func.abi]
   nargs = func.nargs
 
   ret = []
